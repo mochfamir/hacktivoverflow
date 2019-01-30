@@ -69,18 +69,19 @@ export default new Vuex.Store({
           .then(({ data }) => {
             localStorage.setItem('access_token', data.access_token)
             localStorage.setItem('user', JSON.stringify(data.user))
+            this.dispatch('getQuestions')
             context.commit('mutateDataLogin', data.user)
             swal(`Sign in success`)
             this.$router.push({ path: '/' })
           })
           .catch(err => {
-            console.log(err)
             swal(err)
           })
       }
     },
     logout (context) {
       context.commit('mutateLogout')
+      this.dispatch('searchQuestion', [])
     },
     searchQuestion (context, questions) {
       context.commit('mutateDataQuestions', questions)

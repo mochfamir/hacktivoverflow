@@ -3,42 +3,33 @@ const {comparePassword, generateToken} = require('../helper/helper');
 var nodemailer = require('nodemailer');
 var kue = require('kue')
  , queue = kue.createQueue();
- 
-queue.process('email', function(job, done){
-  console.log(job.data)
-  email('hehe', done);
+
+ var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'mochamad13amir@gmail.com',
+    pass: 'Yellowsubmarine1397'
+  }
 });
  
-function email(address, done) {
+queue.process('email', function(job, done){
+  email(job.data, done);
+});
+ 
+function email(data, done) {
   setTimeout(() => {
-    console.log(address)
+    transporter
+      .sendMail(data, function(error, info){
+        console.log(data)
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
     done();
-  }, 5000)
+  }, 2000)
 }
-
-// var transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: 'youremail@gmail.com',
-//     pass: 'yourpassword'
-//   }
-// });
-
-// var mailOptions = {
-//   from: 'youremail@gmail.com',
-//   to: 'myfriend@yahoo.com',
-//   subject: 'Sending Email using Node.js',
-//   text: 'That was easy!'
-// };
-
-
-// transporter.sendMail(mailOptions, function(error, info){
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     console.log('Email sent: ' + info.response);
-//   }
-// });
 
 module.exports = {
   register(req, res) {
@@ -64,11 +55,14 @@ module.exports = {
         if (comparePassword(req.body.password, user.password)) {
           let kue = queue
             .create('email', {
-              email: 'tes'
+              from: 'mochamad13amir@gmail.com',
+              to: user.email,
+              subject: 'Sending Email using Node.js, kue, redis, nodemailer',
+              text: 'That was EZ!'
             })
             .save(function(err) {
-              if (!err) console.log(kue.email)
-              else console.log(err)
+              if (!err) console.log(kue.email, '===')
+              else console.log(err, '+++')
             })
           res.status(200).json({
             access_token: generateToken(user._id, user.email),

@@ -57,6 +57,7 @@ export default {
       })
       this.email = ''
       this.password = ''
+      this.$store.dispatch('getQuestions')
     },
     register() {
       baseUrl.request({

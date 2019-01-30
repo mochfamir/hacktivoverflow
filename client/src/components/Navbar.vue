@@ -4,7 +4,6 @@
       <div class="container">
         <div class="row">
           <div class="col-2">
-            <!-- <a class="navbar-brand" href="#">Navbar</a> -->
             <router-link to="/"><img @click="getQuestions" src="@/assets/icon/727cbfbd-466a-492a-a7ac-130f32a0d48f.png" height="100px" alt=""></router-link>
           </div>
         </div>
@@ -21,7 +20,7 @@
         </button>
         <div class="navbar-nav">
           <router-link v-if="!hasLogin" to="/login"><button class="btn btn-outline-success">Sign In</button></router-link>
-          <button v-else class="btn btn-outline-success" @click="logout">Log Out</button>
+          <button v-if="hasLogin" class="btn btn-outline-success" @click="logout">Log Out</button>
         </div>
       </div>
     </nav>
@@ -45,12 +44,9 @@ export default {
       }
     },
     logout() {
-      this.hasLogin = false
-      alert(this.hasLogin)
       localStorage.removeItem('access_token')
       localStorage.removeItem('user')
       this.$store.dispatch('logout')
-      // this.cekLogin()
     },
     search() {
       this.$router.push({path: '/'})
@@ -75,7 +71,8 @@ export default {
   },
   watch: {
     user(v) {
-      if (v) this.hasLogin = true
+      console.log(v)
+      if (v._id) this.hasLogin = true
       else this.hasLogin = false
     }
   }
